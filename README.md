@@ -1,5 +1,135 @@
 # Brieflow
 
+## INTERNAL NOTES
+
+Forked from cheesemanlab/brieflow for active development for Ward Lab (NINDS) OPS data.
+
+Each developer should **clone** this codebase to their machine - ensure you clone `Ward-Lab-NINDS/brieflow`. This is essential to maintain commit history when merging branches into _main_ branch of the fork.
+
+### Branch Overview
+
+This repository follows the [Git-Flow Workflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) to maintain compatibility with upstream brieflow updates and provide clear traceability to each developer's contributions.
+
+#### Branch Structure
+
+| Branch Type | Naming Convention | Branches From | Merges Into | Purpose |
+|-------------|-------------------|---------------|-------------|---------|
+| **main** | `main` | — | — | Production-ready releases only. Tagged with version numbers. |
+| **develop** | `develop` | `main` | `main` | Shared integration branch for all developers. Contains completed features awaiting release. |
+| **feature** | `feat/<description>` | `develop` | `develop` | Individual developer work on new features or changes. |
+| **release** | `release/<version>` | `develop` | `main` and `develop` | Preparation for a new production release (bug fixes, docs, release tasks only). |
+| **hotfix** | `hotfix/<description>` | `main` | `main` and `develop` | Urgent fixes for production issues. The **only** branch that forks directly from `main`. |
+
+#### Workflow Overview
+
+```
+main ────●─────────────────────────●────────────●─────── (tagged releases)
+         │                         ↑            ↑
+         │                  release/v1.0    hotfix/urgent-fix
+         │                    ↑    │            │
+         ↓                    │    ↓            ↓
+develop ─●────●────●──────────●────●────────────●─────── (integration)
+              │    │          ↑
+              ↓    ↓          │
+           feat/A feat/B ─────┘
+```
+
+#### Feature Branch Workflow
+
+1. **Create a feature branch** from `develop`:
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b feat/<brief-description>
+   ```
+
+2. **Develop and commit** your changes on the feature branch:
+   ```bash
+   git add <files>
+   git commit -m "descriptive commit message"
+   git push origin feat/<brief-description>
+   ```
+
+3. **Open a Pull Request** to merge into `develop` when your feature is complete and tested. **Claire or Pratik** will manage the PR review and merge.
+
+4. **Delete the feature branch** after merging.
+
+#### Release Branch Workflow
+
+When `develop` has acquired enough features for a release (or a predetermined release/publication date is approaching), **Claire or Pratik** will:
+
+1. **Create a release branch** from `develop`:
+   ```bash
+   git checkout develop
+   git pull origin develop
+   git checkout -b release/<version>
+   ```
+
+2. **Only release-oriented work** goes into this branch — bug fixes, documentation, and release preparation. **No new features.**
+
+3. **Merge into `main`** when ready to ship:
+   ```bash
+   git checkout main
+   git merge release/<version>
+   git tag -a v<version> -m "Release v<version>"
+   ```
+
+4. **Merge back into `develop`** to capture any fixes made during release prep:
+   ```bash
+   git checkout develop
+   git merge release/<version>
+   ```
+
+5. **Delete the release branch**.
+
+Using a dedicated release branch allows one dev to polish the current release while another continues working on features for the next release. It creates well-defined phases of development (e.g., "This week we're preparing for version 4.0").
+
+#### Hotfix Branch Workflow
+
+For urgent production issues that cannot wait for the next release cycle:
+
+1. **Create a hotfix branch** from `main` (the **only** branch that forks directly _from_ `main`):
+   ```bash
+   git checkout main
+   git pull origin main
+   git checkout -b hotfix/<description>
+   ```
+
+2. **Fix the issue** and commit.
+
+3. **Merge into `main`** and tag:
+   ```bash
+   git checkout main
+   git merge hotfix/<description>
+   git tag -a v<version> -m "Hotfix v<version>"
+   ```
+
+4. **Merge into `develop`** (or current release branch if one exists):
+   ```bash
+   git checkout develop
+   git merge hotfix/<description>
+   ```
+
+5. **Delete the hotfix branch**.
+
+Hotfix branches let the team address critical issues without interrupting the rest of the workflow or waiting for the next release cycle.
+
+#### Guidelines
+
+- **Never commit directly to `main`** — all changes must go through the appropriate branch and PR process.
+- **Feature branches merge to `develop`**, not `main`.
+- **Only hotfix branches fork from `main`** — everything else branches from `develop`.
+- **Release and hotfix branches merge into both `main` AND `develop`** to ensure fixes are available to ongoing work.
+- **Keep feature branches focused** — one feature or fix per branch.
+- **Test thoroughly** before opening a PR.
+- **Delete branches** after merging to keep the repository clean.
+- **Sync with upstream** periodically to incorporate updates from `cheeseman-lab/brieflow`.
+
+
+![GitFlow Workflow](images/gitflow.png)
+
+---
+
 [![Release](https://img.shields.io/github/v/release/cheeseman-lab/brieflow)](https://github.com/cheeseman-lab/brieflow/releases)
 [![Python](https://img.shields.io/badge/python-3.11-blue)](https://www.python.org/downloads/)
 [![Documentation](https://img.shields.io/badge/docs-brieflow.readthedocs.io-brightgreen)](https://brieflow.readthedocs.io)
